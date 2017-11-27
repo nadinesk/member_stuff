@@ -58,39 +58,36 @@ getMembers <- function(key,congress,branch) {
   
 }
 
-sml_115 <- getMembers('api_key', '115', 'senate') %>%
+sml_115 <- getMembers(api_key, '115', 'senate') %>%
               mutate(congress_num = '115_S')
 
-hml_115 <- getMembers('api_key', '115', 'house') %>%
-              mutate(congress_num = '115_S')
+hml_115 <- getMembers(api_key, '115', 'house') %>%
+              mutate(congress_num = '115_H')
 
+sml_114 <- getMembers(api_key, '114', 'senate') %>%
+              mutate(congress_num = '114_S')
 
-sml_114 <- getMembers('api_key', '114', 'senate') %>%
-              mutate(congress_num = '115_S')
+hml_114 <- getMembers(api_key, '114', 'house') %>%
+              mutate(congress_num = '114_H')
 
-hml_114 <- getMembers('api_key', '114', 'house') %>%
-              mutate(congress_num = '115_S')
+sml_113 <- getMembers(api_key, '113', 'senate') %>%
+              mutate(congress_num = '113_S')
 
-sml_113 <- getMembers('api_key', '113', 'senate') %>%
-              mutate(congress_num = '115_S')
+hml_113 <- getMembers(api_key, '113', 'house') %>%
+              mutate(congress_num = '113_H')
 
-hml_113 <- getMembers('api_key', '113', 'house') %>%
-              mutate(congress_num = '115_S')
+sml_112 <- getMembers(api_key, '112', 'senate') %>%
+              mutate(congress_num = '112_S')
 
-sml_112 <- getMembers('api_key', '112', 'senate') %>%
-              mutate(congress_num = '115_S')
+hml_112 <- getMembers(api_key, '112', 'house') %>%
+              mutate(congress_num = '112_H')
 
-hml_112 <- getMembers('api_key', '112', 'house') %>%
-              mutate(congress_num = '115_S')
-
-sml_111 <- getMembers('api_key', '111', 'senate') %>%
-              mutate(congress_num = '115_S')
+sml_111 <- getMembers(api_key, '111', 'senate') %>%
+              mutate(congress_num = '111_S')
   
-hml_111 <- getMembers('api_key', '111', 'house') %>%
-              mutate(congress_num = '115_S')
+hml_111 <- getMembers(api_key, '111', 'house') %>%
+              mutate(congress_num = '111_H')
 
-
-str(comb_h_congress)
 comb_h_congress <- rbind(hml_115, hml_114, hml_113, hml_112, hml_111) %>% 
                         rename(c("district" = "district#senate_class")) %>%
                         rename(c("at_large" = "at_large#state_rank")) %>%
@@ -103,7 +100,7 @@ comb_s_congress <- rbind(sml_115, sml_114, sml_113, sml_112, sml_111) %>%
 
 comb_sh_congress <- rbind(comb_h_congress, comb_s_congress)
 
-str(comb_sh_congress)
+table(comb_sh_congress$party, comb_sh_congress$congress_num)
 
 
 comb_h_congress1 <- comb_h_congress %>%
