@@ -1,6 +1,8 @@
 library(httr)
 library(dplyr)
 library(plyr)
+library(reshape2)
+library(ggplot2)
 
 
 x=c()
@@ -62,7 +64,7 @@ sml_115 <- getMembers(api_key, '115', 'senate') %>%
               mutate(congress_num = '115_S')
 
 hml_115 <- getMembers(api_key, '115', 'house') %>%
-              mutate(congress_num = '115_H')
+              mutate(congress_num = '115_H') 
 
 sml_114 <- getMembers(api_key, '114', 'senate') %>%
               mutate(congress_num = '114_S')
@@ -88,31 +90,106 @@ sml_111 <- getMembers(api_key, '111', 'senate') %>%
 hml_111 <- getMembers(api_key, '111', 'house') %>%
               mutate(congress_num = '111_H')
 
-comb_h_congress <- rbind(hml_115, hml_114, hml_113, hml_112, hml_111) %>% 
+sml_110 <- getMembers(api_key, '110', 'senate') %>%
+              mutate(congress_num = '110_S') 
+
+hml_110 <- getMembers(api_key, '110', 'house') %>%
+              mutate(congress_num = '110_H')
+
+sml_109 <- getMembers(api_key, '109', 'senate') %>%
+            mutate(congress_num = '109_S')
+
+hml_109 <- getMembers(api_key, '109', 'house') %>%
+  mutate(congress_num = '109_H')
+
+sml_108 <- getMembers(api_key, '108', 'senate') %>%
+  mutate(congress_num = '108_S')
+
+hml_108 <- getMembers(api_key, '108', 'house') %>%
+  mutate(congress_num = '108_H')
+
+sml_107 <- getMembers(api_key, '107', 'senate') %>%
+  mutate(congress_num = '107_S')
+
+hml_107 <- getMembers(api_key, '107', 'house') %>%
+  mutate(congress_num = '107_H')
+
+sml_106 <- getMembers(api_key, '106', 'senate') %>%
+  mutate(congress_num = '106_S')
+
+hml_106 <- getMembers(api_key, '106', 'house') %>%
+  mutate(congress_num = '106_H')
+
+sml_105 <- getMembers(api_key, '105', 'senate') %>%
+  mutate(congress_num = '105_S')
+
+hml_105 <- getMembers(api_key, '105', 'house') %>%
+  mutate(congress_num = '105_H')
+
+sml_104 <- getMembers(api_key, '104', 'senate') %>%
+  mutate(congress_num = '104_S')
+
+hml_104 <- getMembers(api_key, '104', 'house') %>%
+  mutate(congress_num = '104_H')
+
+sml_103 <- getMembers(api_key, '103', 'senate') %>%
+  mutate(congress_num = '103_S')
+
+hml_103 <- getMembers(api_key, '103', 'house') %>%
+  mutate(congress_num = '103_H')
+
+sml_102 <- getMembers(api_key, '102', 'senate') %>%
+  mutate(congress_num = '102_S')
+
+hml_102 <- getMembers(api_key, '102', 'house') %>%
+  mutate(congress_num = '102_H')
+
+str(hml_102)
+names(hml_109)
+names(hml_111)
+
+hml_110_to_102 <- rbind(hml_110, hml_109, hml_108, hml_107, hml_106, hml_105, hml_104,
+                        hml_103, hml_102) %>%
+                        mutate(next_election = "na")
+
+str(hml_110_to_102)
+
+hml_110_to_102_1 <- hml_110_to_102[ ,c(1:27,42,28:41)]
+
+names(hml_110_to_102_1)
+
+
+comb_h_congress <- rbind(hml_115, hml_114, hml_113, hml_112, hml_111,hml_110_to_102_1 ) %>% 
                         rename(c("district" = "district#senate_class")) %>%
                         rename(c("at_large" = "at_large#state_rank")) %>%
                         rename(c("geoid" = "geoid#lis_id")) 
 
-comb_s_congress <- rbind(sml_115, sml_114, sml_113, sml_112, sml_111) %>% 
+comb_s_congress <- rbind(sml_115, sml_114, sml_113, sml_112, sml_111, sml_110, sml_109, sml_108, sml_107, sml_106, sml_105, sml_104,
+                         sml_103, sml_102) %>% 
                         rename(c("senate_class" = "district#senate_class")) %>%
                         rename(c("state_rank" = "at_large#state_rank")) %>%
                         rename(c("lis_id" = "geoid#lis_id")) 
 
 comb_sh_congress <- rbind(comb_h_congress, comb_s_congress)
 
-table(comb_sh_congress$party, comb_sh_congress$congress_num)
+
+cm_party <- as.data.frame(table(comb_sh_congress$party, comb_sh_congress$congress_num))
+
+str(cm_party)
+
+cm_party_melt <- melt(cm_party, value.var=c("value"), id.var=c("Var1", "Var2")) %>%
+                    select(-variable) %>%
+                    rename(c("Var1" = "Party")) %>%
+                    rename(c("Var2" = "Congress_Branch")) %>%
+                    rename(c("value" = "Total"))
+cm_party_melt
+
+cm_graph <- ggplot(cm_party_melt, aes(x=Congress_Branch, y=Total, fill=Party)) +   
+                    geom_bar(stat="identity", position="dodge", size=0.25, width=0.8) +
+                    scale_fill_manual(values=c("blue","red", "purple", "brown"))
 
 
-comb_h_congress1 <- comb_h_congress %>%
-                        rename(c("district" = "district/state_rank"))
-str(comb_h_congress) 
-
-names(sml_115)
-names(hml_115)
-
-
-
-
+cm_graph
 
 
 
